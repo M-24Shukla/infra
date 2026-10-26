@@ -1,0 +1,609 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Java backend infrastructure interview guide: Kubernetes, Docker, Helm, security, Ceph, networking and backpressure."><title>Mayank · Backend Infrastructure Interview Guide</title><style>
+:root{--bg:#f4f6f9;--paper:#fff;--ink:#182638;--muted:#536479;--line:#dce4ec;--blue:#154cb1;--accent:#087b72;--nav:#112238}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--blue);text-underline-offset:3px}a:hover{color:var(--accent)}aside{position:fixed;inset:0 auto 0 0;width:270px;background:var(--nav);color:#fff;padding:28px 18px;overflow:auto}aside .brand{font-size:22px;line-height:1.3;font-weight:800}aside small{color:#b9cce4}nav{margin-top:24px}nav a{display:block;color:#d4e0ef;text-decoration:none;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:6px}nav a:hover,nav a.active{background:#243e5c;color:white}.num{color:#76d8cf;margin-right:8px}main{margin-left:270px;max-width:1250px;padding:35px 45px 90px}.hero{background:linear-gradient(115deg,#123054,#12534f);color:white;padding:35px;border-radius:16px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:12px;color:#9ee5df;font-weight:700}h1{font-size:clamp(28px,4vw,43px);line-height:1.18;max-width:760px;margin:12px 0 16px}h2{font-size:26px;line-height:1.3;margin:0 0 8px}h3{font-size:21px;line-height:1.4;margin:0 0 15px}.hero p{max-width:750px;color:#dbeaf4}.stats{display:flex;gap:25px;flex-wrap:wrap;font-size:14px}.stats strong{font-size:23px;display:block;color:#a5f2df}.toolbar{position:sticky;top:0;z-index:2;background:rgba(244,246,249,.97);padding:16px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=search]{flex:1;min-width:220px;padding:12px 14px;border:1px solid #aebfce;border-radius:8px;font:inherit;background:white}button{border:1px solid #aebfce;background:white;color:var(--ink);border-radius:7px;padding:10px 12px;cursor:pointer;font:600 13px system-ui}button:hover{background:#e5f4f1}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #159d90;outline-offset:3px}#results{width:100%;font-size:13px;color:var(--muted)}section{margin:30px 0 45px}.section-head{padding:8px 0 14px;border-bottom:2px solid var(--line);margin-bottom:20px}.intro{color:var(--muted);margin:8px 0}.badge{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:800;margin-bottom:9px}.topic{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:25px;margin:18px 0;box-shadow:0 3px 10px #11223804}.topic p:first-of-type{margin-top:0}.topic p{margin:14px 0}li{margin:7px 0}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#edf2f7;border-radius:4px;padding:2px 5px;font-size:.9em;overflow-wrap:anywhere}.cmd-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}pre{background:#112238;color:#e1edf9;padding:20px;border-radius:8px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}pre code{padding:0;background:none;color:inherit;font-size:inherit;overflow-wrap:normal}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px;margin:18px 0}th,td{padding:12px 14px;text-align:left;vertical-align:top;border:1px solid var(--line)}th{background:#edf3f8;font-weight:700}td:first-child{font-weight:600;min-width:150px}.refs{font-size:13px;border-top:1px solid var(--line);padding-top:14px;margin-top:22px;color:var(--muted)}.refs a{margin-right:15px;display:inline-block}.qa-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:800;margin:24px 0 10px}details{border:1px solid #d5e4df;border-radius:7px;margin:9px 0;background:#f8fcfb}summary{cursor:pointer;font-weight:650;padding:13px 15px;line-height:1.5}details[open] summary{border-bottom:1px solid #d5e4df}.answer{padding:15px;line-height:1.7}.empty{padding:30px;display:none}.foot{font-size:13px;color:var(--muted);margin-top:45px}[hidden]{display:none!important}#mobile-nav{display:none}.no-js{padding:10px;background:#fff1cd} @media(min-width:1600px){main{margin-right:auto;margin-left:calc(270px + (100vw - 1550px)/2)}}@media(max-width:950px){aside{width:220px}main{margin-left:220px;padding:25px}}@media(max-width:720px){aside{position:static;width:auto;padding:20px}aside nav{display:none}aside.open nav{display:block}#mobile-nav{display:inline-block;float:right}main{margin-left:0;padding:18px}.hero{padding:25px}.topic{padding:18px}h2{font-size:23px}.toolbar{gap:6px}.toolbar button{padding:9px}th,td{padding:9px}.stats{gap:18px}section{margin-top:25px}}@media print{aside,.toolbar,.copy,.no-print{display:none!important}main{margin:0;padding:0;max-width:none}body{background:white;font-size:11pt}.hero{background:white;color:#111;border-bottom:2px solid #222;padding:15px 0}.hero p,.eyebrow,.stats strong{color:#222}.topic{box-shadow:none;break-inside:auto;padding:14px}.section-head{break-after:avoid}h3,summary{break-after:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#111;background:#f3f3f3;font-size:9pt}a{color:#111}details{background:white}.refs a{font-size:9pt}section{break-before:auto}[hidden]{display:none!important}}
+</style></head><body>
+<aside><button id="mobile-nav" aria-expanded="false" aria-controls="toc">Sections</button><div class="brand">Backend / Infra</div><small>Mayank’s interview field guide</small><nav id="toc" aria-label="Sections"><a href="#route"><span class="num">01</span>Start here: your interview route</a><a href="#resume"><span class="num">02</span>Your work: evidence and follow-up questions</a><a href="#docker"><span class="num">03</span>Docker: images, execution and builds</a><a href="#architecture"><span class="num">04</span>Kubernetes architecture and reconciliation</a><a href="#lifecycle"><span class="num">05</span>Health probes, rollout and graceful shutdown</a><a href="#resources"><span class="num">06</span>CPU, memory, JVM and autoscaling</a><a href="#network"><span class="num">07</span>Networking: request path and failures</a><a href="#security"><span class="num">08</span>Security context, identities and access</a><a href="#helm"><span class="num">09</span>Helm: chart design, values and release debugging</a><a href="#storage"><span class="num">10</span>Storage: PV, PVC, CSI and Ceph</a><a href="#buffers"><span class="num">11</span>Ring buffers, congestion and backpressure</a><a href="#kafka"><span class="num">12</span>Kafka performance, reliability and overload</a><a href="#observability"><span class="num">13</span>Observability, Linux and incident method</a><a href="#examples"><span class="num">14</span>Annotated manifest: connect the pieces</a><a href="#cheatsheet"><span class="num">15</span>Command index and final interview checklist</a></nav></aside><main><header class="hero"><div class="eyebrow">MTS · Java backend · infrastructure</div><h1>Understand the system.<br>Explain the evidence.</h1><p>A practical revision guide connecting your Kafka performance work, production RCA and diagnostic automation to Kubernetes, Docker, Helm, security, storage and overload.</p><div class="stats"><span><strong>15</strong>sections</span><span><strong>33</strong>focused topics</span><span><strong>87</strong>interview answers</span><span><strong>Offline</strong>single HTML file</span></div></header><noscript><div class="no-js">All study content and individual expandable answers work without JavaScript. Search and toolbar controls require JavaScript.</div></noscript><div class="toolbar" role="search"><input id="search" type="search" placeholder="Search: OOM, fsGroup, Ceph, ring buffer…" aria-label="Search guide"><button id="expand">Show answers</button><button id="collapse">Hide answers</button><button id="print">Print / PDF</button><div id="results" aria-live="polite"></div></div><div id="empty" class="empty">No matching topics. Try a shorter keyword.</div>
+<section id="route"><div class="section-head"><span class="badge">01 / Start</span><h2>Start here: your interview route</h2><p class="intro">A practical backend infrastructure guide for Mayank • prepared 26 October 2026 • core path first, deeper topics second.</p></div>
+<article class="topic" id="route-1"><h3>How to revise tonight</h3><p>Start with Docker, Kubernetes architecture, probes/resources, networking, security context, Helm, then the incident drills. Continue with Ceph and queueing. Use the questions to practise speaking before revealing answers. Search matches entire topic cards, including answers and commands.</p><p><strong>Scope:</strong> representative interview commands, not an exhaustive CLI manual. Commands use placeholders such as &lt;ns&gt; and &lt;pod&gt;; replace them before use. Linux/node tools may not exist inside a minimal image. No command runs from this page. Cluster examples use common APIs; verify your installed Kubernetes, Helm, Kafka and Ceph versions with their help commands.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy How to revise tonight commands">Copy</button></div><pre><code>kubectl version --client
+helm version
+docker version
+kubectl config current-context
+kubectl config get-contexts</code></pre>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How do I structure an infrastructure answer?</summary><div class="answer">State the expected behavior, give two plausible explanations, choose a check that separates them, interpret the output, then propose a fix and verify it. A command name alone is not a diagnosis.</div></details>
+<details><summary>How should I describe something I have not operated personally?</summary><div class="answer">Say you understand the concept and walk through your investigation approach. Separate direct production experience from study knowledge, especially for Ceph, NIC tuning and security policy administration.</div></details>
+</article>
+</section>
+<section id="resume"><div class="section-head"><span class="badge">02 / Core</span><h2>Your work: evidence and follow-up questions</h2><p class="intro">Use your résumé as the bridge between concepts and experience. These claims come from the résumé and your notes; they are not independently verified production measurements.</p></div>
+<article class="topic" id="resume-1"><h3>Throughput: 360K → 1.5M messages/second</h3><p>Your résumé describes leading a Kafka messaging architecture revamp. Prepare the actual before/after flow, your own contribution, the bottleneck, and the measurement conditions. The ratio is about <strong>4.17×</strong>, or a <strong>317% increase</strong>. Distinguish offered load, accepted messages, successfully processed messages and durable acknowledgements.</p><ul><li>Bring the same message size, partition count, producer/consumer count, resources, duration, acknowledgement settings and error rate into the comparison—or explain differences.</li><li>State the change in p95/p99 latency, consumer lag and CPU/memory if measured. If not measured, say so.</li><li>Potential topics to explain: batching, concurrency, partition distribution, serialization, compression and network/storage limits. These are follow-up prompts, not claims about your implementation.</li></ul>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How did you know the improvement was real?</summary><div class="answer">Explain the load generator, counting point, steady-state window, repetitions and error/lag checks. A producer send rate can rise while consumers fall behind; that is not equivalent to an end-to-end processing improvement.</div></details>
+<details><summary>What if they ask what you personally did?</summary><div class="answer">Identify the code/design or experiment you owned, the alternatives you evaluated, and what teammates owned. Use a concrete before/after example; do not substitute a team-level metric for personal contribution.</div></details>
+</article>
+<article class="topic" id="resume-2"><h3>Diagnostic suite, RCA, Java and AI workflows</h3><p>Your shell suite correlates Kafka health, lag, ISR, partition distribution, throughput, Kubernetes resources and operating-system signals. Your résumé states initial diagnostics fell from about 15 minutes to 15 seconds, with roughly five engineer-hours saved weekly. Describe what the timed step actually collected; avoid calling this full incident resolution.</p><p>For Java/Spring Boot/Micronaut, prepare one request or message path from entry point to storage. For AI agents and MCP workflows, explain context gathering, bounded tasks, secret handling, review and independent verification. Do not imply automated production changes unless you actually built and authorised them.</p>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>What makes a diagnostic script reliable?</summary><div class="answer">Explicit namespace/context, timeouts, bounded parallelism, timestamped output, dependency checks, partial-failure reporting, exit codes, and redacted output. A failed command must not be reported as a healthy component.</div></details>
+<details><summary>What is a strong RCA story?</summary><div class="answer">Impact → timeline → competing hypotheses → discriminating evidence → root cause → mitigation → permanent fix → validation. Separate correlation from mechanism and describe how recurrence is detected.</div></details>
+<details><summary>How do you validate an AI debugging suggestion?</summary><div class="answer">Confirm the referenced code path and deployed configuration, reproduce the failure, and use tests or measurements whose expected results come from the requirements. AI-written tests can repeat the same mistaken assumption as its fix.</div></details>
+</article>
+</section>
+<section id="docker"><div class="section-head"><span class="badge">03 / Core</span><h2>Docker: images, execution and builds</h2><p class="intro">Explain how a Java artifact becomes a process, and how container isolation differs from a virtual machine.</p></div>
+<article class="topic" id="docker-1"><h3>Images, layers, namespaces and cgroups</h3><p>An image is a layered filesystem plus execution metadata. A container is a process environment created from it, usually with a writable layer. Linux namespaces isolate views such as processes and networking; cgroups account for and constrain resource use. Containers share the host kernel, unlike a VM with its own guest kernel.</p><p>Container writable data is not durable application storage. A volume can outlive a container; a bind mount exposes a host path. <code>EXPOSE</code> documents a port; <code>-p</code> publishes it. <code>localhost</code> means the current network namespace, not automatically the host.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Images, layers, namespaces and cgroups commands">Copy</button></div><pre><code>docker image ls
+docker image inspect myapp:interview
+docker history myapp:interview
+docker ps -a
+docker inspect &lt;container&gt;
+docker logs --tail 100 &lt;container&gt;
+docker stats --no-stream &lt;container&gt;
+docker network ls
+docker volume ls</code></pre>
+<div class="refs">Read in context: <a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/" target="_blank" rel="noopener noreferrer">Container basics ↗</a><a href="https://kubernetes.io/docs/concepts/architecture/cri/" target="_blank" rel="noopener noreferrer">Container Runtime Interface ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why can a container use little heap but much more memory overall?</summary><div class="answer">The process also uses metaspace, code cache, native libraries, thread stacks and direct buffers. Depending on accounting, filesystem cache also matters. Heap usage and total cgroup memory are different measurements.</div></details>
+<details><summary>Does Kubernetes need the Docker daemon?</summary><div class="answer">No. The kubelet talks to a CRI-compatible runtime such as containerd or CRI-O. OCI images built by Docker can run there. Docker tooling and Kubernetes runtime integration are separate concepts.</div></details>
+</article>
+<article class="topic" id="docker-2"><h3>Dockerfile keywords and a Java runtime example</h3><div class="table-wrap"><table><thead><tr><th>Keyword</th><th>Meaning / interview point</th></tr></thead><tbody><tr><td>FROM</td><td>Base stage/image. Pin approved versions or digests for reproducibility.</td></tr><tr><td>WORKDIR</td><td>Working directory for subsequent instructions and runtime.</td></tr><tr><td>COPY / ADD</td><td>COPY for local files; ADD has additional archive/remote behavior.</td></tr><tr><td>RUN</td><td>Executes during image build; distinguish from startup.</td></tr><tr><td>ARG / ENV</td><td>Build parameter versus persisted runtime environment. Neither is a secret store.</td></tr><tr><td>ENTRYPOINT / CMD</td><td>Executable and default arguments; runtime overrides depend on their combination.</td></tr><tr><td>USER</td><td>Runtime identity; arrange ownership before dropping privileges.</td></tr></tbody></table></div><p>Illustration assumes an existing <code>app.jar</code> and the approved Java 21 runtime below. Adapt the JDK to your application. Exec-form ENTRYPOINT lets Java receive signals directly. Multi-stage builds keep build tooling out of the runtime image; layer order and <code>.dockerignore</code> reduce rebuild work.</p>
+<div class="cmd-head"><span>Example / changes</span><button class="copy" aria-label="Copy Dockerfile keywords and a Java runtime example commands">Copy</button></div><pre><code>FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --chown=10001:10001 app.jar /app/app.jar
+USER 10001:10001
+EXPOSE 8080
+ENTRYPOINT [&quot;java&quot;, &quot;-jar&quot;, &quot;/app/app.jar&quot;]
+
+# Local build/run examples: create an image/container
+docker build -t myapp:interview .
+docker run --rm --name myapp -p 8080:8080 --memory=512m --cpus=1 myapp:interview
+# Targeted changes, not diagnostics
+docker stop --time 30 myapp</code></pre>
+<div class="refs">Read in context: <a href="https://docs.docker.com/reference/dockerfile/" target="_blank" rel="noopener noreferrer">Dockerfile reference ↗</a><a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener noreferrer">Build practices ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why avoid a shell-form Java startup command?</summary><div class="answer">An intermediate shell may interfere with signal forwarding. Use exec form or an entry script ending with exec java ... so the JVM receives termination signals and can shut down cleanly.</div></details>
+<details><summary>Why not copy credentials and delete them in a later layer?</summary><div class="answer">Earlier image layers may retain them. Use build secret mounts for build-time credentials and an appropriate runtime secret mechanism. Do not print credentials in build logs.</div></details>
+<details><summary>Is a smaller image always better?</summary><div class="answer">It reduces transfer/storage and often attack surface, but must still support the application and operational plan. Distroless/minimal images may need external debug tooling rather than an installed shell.</div></details>
+</article>
+</section>
+<section id="architecture"><div class="section-head"><span class="badge">04 / Core</span><h2>Kubernetes architecture and reconciliation</h2><p class="intro">Know which component acts at each stage; avoid treating Kubernetes as one process.</p></div>
+<article class="topic" id="architecture-1"><h3>From Deployment YAML to running containers</h3><p>The API server authenticates, authorises and admits requests. Controllers reconcile desired and observed state. A Deployment manages ReplicaSets; a ReplicaSet maintains Pods. The scheduler selects nodes for unscheduled Pods. A node’s kubelet coordinates containers through the runtime and reports status. Networking and storage plugins provide their respective integrations.</p><p><a href="https://etcd.io/docs/v3.6/learning/why/" target="_blank" rel="noopener noreferrer"><strong>etcd</strong></a> stores Kubernetes API state. It is a consensus-backed key-value store, not your application volume. Its quorum is a majority: a three-member cluster tolerates one member failure. Loss of control-plane availability can prevent changes while existing workloads may keep running; that does not guarantee every workload remains healthy.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy From Deployment YAML to running containers commands">Copy</button></div><pre><code>kubectl cluster-info
+kubectl get nodes -o wide
+kubectl get deployments,replicasets,pods -n &lt;ns&gt;
+kubectl get pod &lt;pod&gt; -n &lt;ns&gt; -o yaml
+kubectl get events -n &lt;ns&gt; --sort-by=.metadata.creationTimestamp</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/overview/components/" target="_blank" rel="noopener noreferrer">Kubernetes components ↗</a><a href="https://etcd.io/docs/v3.6/learning/why/" target="_blank" rel="noopener noreferrer">etcd and consensus ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Who actually starts a container: the scheduler or kubelet?</summary><div class="answer">The scheduler selects a node. The kubelet on that node works with the container runtime to start and manage the container.</div></details>
+<details><summary>Why does a deleted Pod reappear?</summary><div class="answer">Its controller still observes a desired replica count. It creates a replacement with a new identity/IP. Deleting a Pod is not equivalent to changing the desired Deployment.</div></details>
+<details><summary>Is etcd where my PVC data lives?</summary><div class="answer">No. Kubernetes stores resource metadata in etcd. PVC contents live in the backing storage system, such as Ceph. Disaster recovery must cover both independently.</div></details>
+</article>
+<article class="topic" id="architecture-2"><h3>Workload selection, scheduling and availability</h3><div class="table-wrap"><table><thead><tr><th>Object / keyword</th><th>Use and trade-off</th></tr></thead><tbody><tr><td>Deployment</td><td>Replaceable replicas, commonly stateless services.</td></tr><tr><td>StatefulSet</td><td>Stable Pod identities and per-replica storage relationships; it does not implement database replication.</td></tr><tr><td>DaemonSet</td><td>Node-local agents on eligible nodes.</td></tr><tr><td>Job / CronJob</td><td>Finite work / scheduled Jobs; account for overlap, retries and idempotency.</td></tr><tr><td>Affinity / anti-affinity</td><td>Placement preferences or constraints; strict rules can leave Pods Pending.</td></tr><tr><td>Taint / toleration</td><td>A toleration permits placement on a tainted node; it does not force placement.</td></tr><tr><td>PDB</td><td>Limits certain voluntary disruptions; not protection from node crashes or every rollout action.</td></tr></tbody></table></div>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Workload selection, scheduling and availability commands">Copy</button></div><pre><code>kubectl get statefulsets,daemonsets,jobs,cronjobs -n &lt;ns&gt;
+kubectl get pdb,hpa -n &lt;ns&gt;
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
+kubectl describe node &lt;node&gt;</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/workloads/controllers/" target="_blank" rel="noopener noreferrer">Workload controllers ↗</a><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/" target="_blank" rel="noopener noreferrer">Scheduling and eviction ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why is my Pod Pending although node CPU usage is low?</summary><div class="answer">Scheduling considers resource requests and other constraints, not only current utilisation. Check events for insufficient requested resources, affinity/taints, unbound volumes or topology restrictions.</div></details>
+<details><summary>Would three replicas guarantee high availability?</summary><div class="answer">No. They can share a node or failure domain, fail the same dependency, or all be unready. Placement, capacity, dependency resilience and rollout settings also matter.</div></details>
+</article>
+<article class="topic" id="architecture-3"><h3>Pod status: what the symptom actually means</h3><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Investigate before changing anything</th></tr></thead><tbody><tr><td>Pending</td><td>Scheduling events, requests/capacity, taints/affinity and PVC binding.</td></tr><tr><td>ImagePullBackOff / ErrImagePull</td><td>Image reference/digest, registry reachability, imagePullSecrets, credentials and CPU architecture.</td></tr><tr><td>CreateContainerConfigError</td><td>Missing Secret/ConfigMap keys, invalid configuration references and event details.</td></tr><tr><td>ContainerCreating</td><td>Volume attachment/mounting, sandbox/CNI setup and runtime events.</td></tr><tr><td>CrashLoopBackOff</td><td>Repeated exits with restart backoff; inspect last termination and previous logs.</td></tr><tr><td>OOMKilled</td><td>Memory evidence at container/node level, heap/native/queue behavior.</td></tr><tr><td>Evicted</td><td>Node-pressure or other eviction events; replacement is controller-dependent.</td></tr><tr><td>Terminating</td><td>Graceful shutdown, finalizers, node health and storage operations.</td></tr></tbody></table></div><p>These are operational status/reason strings shown by tools, not all distinct Pod phases. CrashLoopBackOff is not the underlying application exception.</p>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/" target="_blank" rel="noopener noreferrer">Pod diagnosis ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>A new image works locally but fails in Kubernetes. What differs?</summary><div class="answer">Compare image digest and CPU architecture, entrypoint/arguments, UID, filesystem permissions, runtime configuration, resource limits, dependencies and probes. Confirm the node can pull the exact image.</div></details>
+<details><summary>Would you force-delete a stuck Pod?</summary><div class="answer">First determine whether the process could still run, what owns it and whether storage/data consistency is at risk. Force removal of the API object does not guarantee the old process stopped.</div></details>
+</article>
+</section>
+<section id="lifecycle"><div class="section-head"><span class="badge">05 / Core</span><h2>Health probes, rollout and graceful shutdown</h2><p class="intro">A running process, a healthy process and a process ready to serve traffic are different states.</p></div>
+<article class="topic" id="lifecycle-1"><h3>Startup vs readiness vs liveness</h3><p>Startup allows initialisation to complete before other probes run. Readiness determines whether a Pod is eligible for normal Service traffic. Liveness can restart a stuck container after its failure threshold. A readiness failure alone does not restart it. Probe period, timeout and thresholds determine reaction time.</p><p>Avoid making liveness depend on every downstream service: a database outage can otherwise cause mass restarts without fixing the outage. Readiness dependencies need judgment too: removing every replica during a shared failure can eliminate useful degraded behavior. For Spring Boot, verify Actuator health group paths and exposure rather than assuming a default endpoint is enabled.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Startup vs readiness vs liveness commands">Copy</button></div><pre><code>kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
+kubectl get pod &lt;pod&gt; -n &lt;ns&gt; -o yaml
+kubectl get endpointslices -n &lt;ns&gt; -l kubernetes.io/service-name=&lt;service&gt;
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; -c &lt;container&gt; --previous</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/workloads/pods/probes/" target="_blank" rel="noopener noreferrer">Probe semantics ↗</a><a href="https://docs.spring.io/spring-boot/reference/actuator/endpoints.html" target="_blank" rel="noopener noreferrer">Spring Boot Actuator ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Pod is Running but receives no requests. Why?</summary><div class="answer">Inspect readiness, Service selectors, EndpointSlice readiness and port mapping. Running describes execution state; it does not prove readiness or reachability.</div></details>
+<details><summary>A Java service takes 90 seconds to start and repeatedly restarts. What do you check?</summary><div class="answer">Check termination reason and probe events. If liveness is killing legitimate startup, use a startup probe with an evidence-based budget. Also rule out OOM or application exceptions instead of merely extending thresholds.</div></details>
+</article>
+<article class="topic" id="lifecycle-2"><h3>Rollout, traffic draining and termination</h3><p>A rolling Deployment controls replacement using <code>maxSurge</code> and <code>maxUnavailable</code>. Extra replicas need spare resources. On termination, route removal and process shutdown are asynchronous: design for in-flight traffic. A preStop hook consumes the same termination grace budget; the process then needs time to finish or checkpoint work before forced termination.</p><p>For Kafka consumers, stop accepting new work, handle outstanding processing/offset semantics and close cleanly. For HTTP, configure framework graceful shutdown and ensure load-balancer/ingress behavior matches the drain window. A rollback can restore an image/configuration, but does not automatically reverse a database migration.</p>
+<div class="cmd-head"><span>Inspect + labelled changes</span><button class="copy" aria-label="Copy Rollout, traffic draining and termination commands">Copy</button></div><pre><code># Inspect
+kubectl rollout status deployment/&lt;app&gt; -n &lt;ns&gt;
+kubectl rollout history deployment/&lt;app&gt; -n &lt;ns&gt;
+kubectl get deployment &lt;app&gt; -n &lt;ns&gt; -o yaml
+# Changes: use deliberately
+kubectl rollout undo deployment/&lt;app&gt; -n &lt;ns&gt;
+kubectl scale deployment/&lt;app&gt; -n &lt;ns&gt; --replicas=3</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener noreferrer">Deployments ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/" target="_blank" rel="noopener noreferrer">Pod termination ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why can a rolling update cause 502s despite multiple replicas?</summary><div class="answer">Check readiness accuracy, draining of terminating Pods, ingress upstream state, startup timing and capacity. Multiple replicas do not remove races around connections and termination.</div></details>
+<details><summary>Does a longer preStop sleep guarantee graceful shutdown?</summary><div class="answer">No. It delays termination and consumes grace time. Application shutdown, routing propagation and connection behavior still need verification under a rollout test.</div></details>
+</article>
+</section>
+<section id="resources"><div class="section-head"><span class="badge">06 / Core</span><h2>CPU, memory, JVM and autoscaling</h2><p class="intro">Resource tuning must connect a limit or metric to a specific bottleneck.</p></div>
+<article class="topic" id="resources-1"><h3>Requests, limits and Java memory</h3><p>Requests influence scheduling and relative resource allocation; limits constrain usage. CPU can be throttled at its limit without a restart. Memory pressure can cause termination; <code>OOMKilled</code> is stronger evidence than exit code 137 alone, which only indicates SIGKILL. Node pressure eviction is a different mechanism.</p><p>JVM container memory includes heap + metaspace + code cache + stacks + direct/native allocations. Leave measured headroom rather than setting Xmx equal to the memory limit. A memory-backed emptyDir also consumes memory. In a load test, correlate request rate, p99 latency, throttling, allocation/GC and total working set.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Requests, limits and Java memory commands">Copy</button></div><pre><code>kubectl top pods -n &lt;ns&gt; --containers
+kubectl top nodes
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
+kubectl get pod &lt;pod&gt; -n &lt;ns&gt; -o jsonpath=&#x27;{.status.containerStatuses}&#x27;
+# Inside the JVM container if JDK tools and permissions are available:
+jcmd &lt;pid&gt; VM.flags
+jcmd &lt;pid&gt; GC.heap_info
+jcmd &lt;pid&gt; Thread.print
+# Recording: writes a file and has diagnostic overhead
+jcmd &lt;pid&gt; JFR.start name=incident settings=profile duration=60s filename=/tmp/incident.jfr</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank" rel="noopener noreferrer">Resource management ↗</a><a href="https://docs.oracle.com/en/java/javase/21/docs/specs/man/jcmd.html" target="_blank" rel="noopener noreferrer">jcmd reference ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why is adding heap not the default OOM fix?</summary><div class="answer">First determine whether the issue is heap retention, allocation pressure, native memory, thread growth or an undersized container. Increasing heap inside a fixed limit can reduce native headroom.</div></details>
+<details><summary>Why does low average CPU not rule out CPU trouble?</summary><div class="answer">Averages can hide a saturated core, bursts or quota throttling. Examine per-container/per-core behavior and time-aligned throttling signals.</div></details>
+<details><summary>What are the limits of kubectl top?</summary><div class="answer">It requires the metrics pipeline and shows recent usage, not a complete history, heap breakdown or CPU profile. Use it to orient, not prove a root cause.</div></details>
+</article>
+<article class="topic" id="resources-2"><h3>HPA, capacity and dependency limits</h3><p>HPA changes replica count based on configured metrics. CPU utilisation targets commonly use CPU requests as the denominator. Missing/misleading requests undermine interpretation. A metrics adapter is needed for many custom/external metrics. Stabilisation and startup effects matter.</p><p>Scaling consumers is limited by partition assignment and downstream capacity. Ten replicas with 30 database connections each can demand 300 connections. Fix the constrained resource rather than moving the queue elsewhere.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy HPA, capacity and dependency limits commands">Copy</button></div><pre><code>kubectl get hpa -n &lt;ns&gt;
+kubectl describe hpa &lt;name&gt; -n &lt;ns&gt;
+kubectl get resourcequota,limitrange -n &lt;ns&gt;</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener noreferrer">Horizontal Pod Autoscaler ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>If Kafka lag grows, should we always add consumers?</summary><div class="answer">Check partition count, assignment skew, per-partition ordering, processing cost, broker/storage and downstream limits. Replicas beyond available partition parallelism may be idle.</div></details>
+<details><summary>Why can scaling make an incident worse?</summary><div class="answer">It may multiply DB connections, retries, cache misses and pressure on a saturated dependency. Include dependency capacity and overload controls in the scaling plan.</div></details>
+</article>
+</section>
+<section id="network"><div class="section-head"><span class="badge">07 / Core</span><h2>Networking: request path and failures</h2><p class="intro">Trace one request: client → load balancer/Ingress controller → Service-selected backend → Pod listener → downstream dependency. Service forwarding implementations differ by cluster.</p></div>
+<article class="topic" id="network-1"><h3>Pod network, Service, DNS and ingress</h3><div class="table-wrap"><table><thead><tr><th>Keyword</th><th>Meaning</th></tr></thead><tbody><tr><td>CNI</td><td>Plugin integration for Pod networking; some implementations also enforce policies or implement service forwarding.</td></tr><tr><td>ClusterIP / NodePort / LoadBalancer</td><td>Internal virtual service address / node-level exposure / external load-balancer integration.</td></tr><tr><td>port / targetPort / containerPort</td><td>Service-facing port / destination listener port / declared container metadata. Declaring containerPort does not start a listener.</td></tr><tr><td>CoreDNS</td><td>Cluster DNS service, commonly resolving service.namespace.svc.cluster.local; cluster domain may differ.</td></tr><tr><td>Ingress / Gateway API</td><td>Routing APIs that require an implementation/controller. An object alone is not a working proxy.</td></tr><tr><td>EndpointSlice</td><td>Tracks Service backend addresses and conditions.</td></tr></tbody></table></div><p>Containers in one Pod share networking and can communicate over localhost. Different Pods do not share localhost. A server bound only to 127.0.0.1 is not reachable through the Pod IP.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Pod network, Service, DNS and ingress commands">Copy</button></div><pre><code>kubectl get svc,ingress,endpointslices -n &lt;ns&gt;
+kubectl describe svc &lt;service&gt; -n &lt;ns&gt;
+kubectl get pods -n &lt;ns&gt; --show-labels
+kubectl get endpointslices -n &lt;ns&gt; -l kubernetes.io/service-name=&lt;service&gt;
+# From an existing diagnostic-capable Pod:
+kubectl exec &lt;pod&gt; -n &lt;ns&gt; -- cat /etc/resolv.conf
+kubectl exec &lt;pod&gt; -n &lt;ns&gt; -- nslookup &lt;service&gt;.&lt;ns&gt;.svc.cluster.local
+kubectl exec &lt;pod&gt; -n &lt;ns&gt; -- curl -sv --connect-timeout 3 --max-time 10 http://&lt;service&gt;:&lt;port&gt;/health</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/services-networking/" target="_blank" rel="noopener noreferrer">Service networking ↗</a><a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/" target="_blank" rel="noopener noreferrer">Service debugging ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Service has no usable endpoints. What do you check?</summary><div class="answer">Selector/label agreement, readiness, target Pods and EndpointSlice conditions. Then confirm that the application listens on the intended interface and targetPort.</div></details>
+<details><summary>Pod IP works but Service DNS fails. What next?</summary><div class="answer">Separate name resolution from forwarding: resolve the FQDN, inspect resolv.conf/CoreDNS and DNS egress, then test the Service IP. A DNS success does not prove the Service routes traffic.</div></details>
+</article>
+<article class="topic" id="network-2"><h3>NetworkPolicy, TLS and failure classification</h3><p>A NetworkPolicy selects Pods and describes allowed ingress/egress at network level. Enforcement requires supporting networking. Policies are additive; traffic may need both source egress and destination ingress permission. Explicit default-deny needs required exceptions, including DNS to the actual cluster DNS path. Standard NetworkPolicy does not express HTTP paths or general FQDN rules.</p><div class="table-wrap"><table><thead><tr><th>Observation</th><th>Next discriminating checks</th></tr></thead><tbody><tr><td>Connection refused</td><td>Check listener, destination port and reject behavior; do not assume packet loss.</td></tr><tr><td>Connection timeout</td><td>Check path, policy, route, listener capacity and packet evidence; no single cause is implied.</td></tr><tr><td>DNS error</td><td>Check resolver response, DNS service and network reachability.</td></tr><tr><td>TLS failure</td><td>Check trust chain, expiry, SAN/hostname, SNI and clock.</td></tr><tr><td>502 / 503 / 504</td><td>Identify which proxy issued it and inspect its upstream status/logs; codes are clues, not root causes.</td></tr></tbody></table></div>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy NetworkPolicy, TLS and failure classification commands">Copy</button></div><pre><code>kubectl get networkpolicy -n &lt;ns&gt;
+kubectl describe networkpolicy &lt;policy&gt; -n &lt;ns&gt;
+# From the same network context as the failing client:
+curl -v --connect-timeout 3 --max-time 10 https://&lt;host&gt;/health
+openssl s_client -connect &lt;host&gt;:443 -servername &lt;host&gt; -verify_return_error &lt; /dev/null
+# Local tunnel: creates a forwarding session, not proof of normal Service routing
+kubectl port-forward -n &lt;ns&gt; svc/&lt;service&gt; 18080:&lt;service-port&gt;</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/" target="_blank" rel="noopener noreferrer">NetworkPolicy semantics ↗</a><a href="https://docs.openssl.org/master/man1/openssl-s_client/" target="_blank" rel="noopener noreferrer">TLS diagnostic tool ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why does port-forward work while the real request fails?</summary><div class="answer">It uses a different path through the API/kubelet forwarding machinery. It can bypass the ingress, load balancer or normal Service data path involved in the incident.</div></details>
+<details><summary>Does NetworkPolicy encrypt traffic?</summary><div class="answer">No. It controls allowed network communication when enforced. TLS/mTLS and certificate management address encryption and peer authentication.</div></details>
+<details><summary>Would you use curl -k to fix TLS?</summary><div class="answer">No. It bypasses certificate verification and can hide the fault. Inspect chain, hostname, trust and expiry; use verification bypass only as a clearly bounded diagnostic comparison if permitted.</div></details>
+</article>
+<article class="topic" id="network-3"><h3>Linux network diagnostics: packet loss, MTU, sockets and conntrack</h3><p>Check the network namespace and interface that carries the flow. Compare deltas over the incident window. Retransmissions may indicate loss or reordering but do not identify the failing hop. Small requests succeeding while large requests stall suggests an MTU/PMTUD hypothesis, not proof. Connection churn can exhaust ephemeral ports or conntrack capacity.</p><p>These are Linux host/network-namespace tools. Some require privileges and installed packages. Packet capture can contain sensitive data; use a narrow filter and bounded capture. A distroless application container is not expected to contain every utility.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Linux network diagnostics: packet loss, MTU, sockets and conntrack commands">Copy</button></div><pre><code>ip addr
+ip route
+ip -s link
+ss -s
+ss -tin
+nstat -az
+tc -s qdisc show
+# On the relevant node/interface, tools/permissions permitting:
+ethtool -S &lt;iface&gt;
+ethtool -g &lt;iface&gt;
+conntrack -S
+sysctl net.netfilter.nf_conntrack_count net.netfilter.nf_conntrack_max
+# Bounded packet capture; may need elevated privileges
+tcpdump -ni &lt;iface&gt; -c 100 &#x27;host &lt;peer-ip&gt; and port &lt;port&gt;&#x27;</code></pre>
+<div class="refs">Read in context: <a href="https://www.kernel.org/doc/html/latest/networking/scaling.html" target="_blank" rel="noopener noreferrer">Linux networking scaling ↗</a><a href="https://docs.kernel.org/networking/ip-sysctl.html" target="_blank" rel="noopener noreferrer">TCP/IP settings ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How would you investigate an MTU mismatch?</summary><div class="answer">Compare interface/tunnel MTUs and packet-size-dependent behavior from the failing namespace. Use tracepath or controlled non-fragmenting probes where permitted and inspect ICMP/packet evidence. Fix the network path rather than blindly shrinking every MTU.</div></details>
+<details><summary>What does a growing socket Send-Q suggest?</summary><div class="answer">For an established TCP connection it indicates queued/unacknowledged data. Check receiver progress, advertised window, retransmissions and RTT. Queue interpretation differs for listening sockets, so first inspect socket state.</div></details>
+</article>
+</section>
+<section id="security"><div class="section-head"><span class="badge">08 / Core</span><h2>Security context, identities and access</h2><p class="intro">Explain the layer each security mechanism controls: API permissions, process privileges, network reachability, storage permissions, or application identity.</p></div>
+<article class="topic" id="security-1"><h3>SecurityContext fields and practical failure modes</h3><div class="table-wrap"><table><thead><tr><th>Field / concept</th><th>Purpose and nuance</th></tr></thead><tbody><tr><td>runAsUser / runAsGroup</td><td>Numeric process UID/GID. The image and mounted files must support that identity.</td></tr><tr><td>runAsNonRoot</td><td>Requires non-root execution; it does not repair file permissions.</td></tr><tr><td>fsGroup</td><td>Supplemental group/volume access behavior; ownership handling depends on volume and CSI driver.</td></tr><tr><td>fsGroupChangePolicy</td><td>Can reduce recursive ownership work; driver-managed group handling may change applicability.</td></tr><tr><td>allowPrivilegeEscalation: false</td><td>Prevents acquiring additional privileges via mechanisms such as setuid.</td></tr><tr><td>capabilities.drop: [ALL]</td><td>Drops Linux capabilities; add only a justified minimum.</td></tr><tr><td>readOnlyRootFilesystem</td><td>Makes image root filesystem read-only; provide writable mounts for required paths.</td></tr><tr><td>seccompProfile: RuntimeDefault</td><td>Uses runtime syscall filtering.</td></tr><tr><td>SELinux / AppArmor</td><td>Additional access control; configuration and support depend on node/runtime.</td></tr><tr><td>privileged / hostPID / hostNetwork / hostPath</td><td>Broaden host access or weaken isolation; do not use as a generic permission fix.</td></tr></tbody></table></div><p>Pod-level fields establish shared/default settings; container-level fields configure a specific container and can override overlapping fields. Linux permissions remain UID/GID/mode-based. See the linked field documentation for exact scope.</p>
+<div class="cmd-head"><span>Configuration example</span><button class="copy" aria-label="Copy SecurityContext fields and practical failure modes commands">Copy</button></div><pre><code># Pod spec fragment: illustrative, adapt paths and UID to your image
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: app
+      image: myapp:interview
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [&quot;ALL&quot;]
+      volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: tmp
+      emptyDir:
+        sizeLimit: 128Mi</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/" target="_blank" rel="noopener noreferrer">Security context field behavior ↗</a><a href="https://kubernetes.io/docs/concepts/security/linux-kernel-security-constraints/" target="_blank" rel="noopener noreferrer">Kernel security constraints ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>A non-root Java Pod gets Permission denied on a PVC. What do you inspect?</summary><div class="answer">Inspect the effective UID/groups, mount options, file owner/mode, fsGroup and driver support. Also check SELinux/AppArmor denials and whether it is a read-only mount. Do not immediately switch to root or chmod 777.</div></details>
+<details><summary>Why can readOnlyRootFilesystem break a previously working service?</summary><div class="answer">The app or JVM may write temp files, logs, extracted libraries or caches. Identify exact write paths and mount suitably sized writable volumes. Keep application logs on stdout/stderr where appropriate.</div></details>
+<details><summary>Does fsGroup always recursively chown every CSI volume?</summary><div class="answer">No. Behavior depends on volume type and driver capabilities. Some CSI drivers handle mount group themselves; fsGroupChangePolicy does not control those driver-managed operations.</div></details>
+</article>
+<article class="topic" id="security-2"><h3>RBAC, service accounts, Secrets and Pod Security Admission</h3><p>A ServiceAccount is a workload API identity. Roles define namespaced permissions; ClusterRoles can define broader rules; bindings grant them to subjects. Authentication identifies you, authorisation decides what you may do. Pod Security Admission can enforce Baseline or Restricted policies, with warn/audit modes for rollout.</p><p>Secret data encoded in base64 is not thereby encrypted. Use least privilege, encryption at rest where configured, short-lived identity, careful logging and a suitable secret distribution mechanism. Avoid mounting API tokens into workloads that do not need them. RBAC is separate from Linux UID and file permissions.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy RBAC, service accounts, Secrets and Pod Security Admission commands">Copy</button></div><pre><code>kubectl auth can-i get pods -n &lt;ns&gt;
+kubectl auth can-i create deployments -n &lt;ns&gt;
+kubectl get serviceaccounts,roles,rolebindings -n &lt;ns&gt;
+kubectl get clusterroles,clusterrolebindings
+kubectl get namespace &lt;ns&gt; --show-labels
+kubectl get pod &lt;pod&gt; -n &lt;ns&gt; -o yaml
+# Runtime identity, if shell utilities exist:
+kubectl exec &lt;pod&gt; -n &lt;ns&gt; -- id</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/" target="_blank" rel="noopener noreferrer">RBAC ↗</a><a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener noreferrer">Pod Security Standards ↗</a><a href="https://kubernetes.io/docs/concepts/configuration/secret/" target="_blank" rel="noopener noreferrer">Secrets ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Does root in a container automatically mean Kubernetes cluster-admin?</summary><div class="answer">No. Process privileges and Kubernetes API authorisation are separate. Root/host access can still be dangerous, particularly with privileged settings, host mounts or exposed credentials.</div></details>
+<details><summary>Why can a secure-looking manifest still be rejected?</summary><div class="answer">Admission can enforce additional policy, required fields or organisational restrictions. Read the rejection and policy level/version. SecurityContext configures runtime behavior; admission decides whether the specification is allowed.</div></details>
+<details><summary>How would you check access without dumping a Secret?</summary><div class="answer">Use auth can-i, metadata and resource references. Do not print Secret contents or broad environment dumps into diagnostic bundles.</div></details>
+</article>
+<article class="topic" id="security-3"><h3>Network isolation example: allow one caller to one port</h3><p>This example selects app=backend in its namespace and permits ingress from Pods labelled app=frontend in that same namespace, to TCP 8080. Other ingress is denied for the selected backend unless another policy allows it. It does not restrict egress, encrypt traffic or authenticate an application user. Enforcing CNI support is required. For cross-namespace callers, use namespaceSelector and podSelector together in the same peer when both conditions should apply.</p>
+<div class="cmd-head"><span>Configuration example</span><button class="copy" aria-label="Copy Network isolation example: allow one caller to one port commands">Copy</button></div><pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-from-frontend
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - protocol: TCP
+          port: 8080</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/" target="_blank" rel="noopener noreferrer">NetworkPolicy examples ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>If frontend egress is default-deny, is this enough?</summary><div class="answer">No. The caller also needs an applicable egress allowance to the backend, and DNS allowance if using names. Test the real client-to-server path.</div></details>
+<details><summary>What mistake changes AND into OR in policy peers?</summary><div class="answer">Putting namespaceSelector and podSelector in separate list entries makes them alternative peers. Putting both in the same entry selects matching Pods within matching namespaces.</div></details>
+</article>
+</section>
+<section id="helm"><div class="section-head"><span class="badge">09 / Core</span><h2>Helm: chart design, values and release debugging</h2><p class="intro">Chart → values merge → template rendering → Kubernetes admission → controllers → running application.</p></div>
+<article class="topic" id="helm-1"><h3>Chart structure, values and template keywords</h3><p><code>Chart.yaml</code> identifies a chart and dependencies; <code>values.yaml</code> provides defaults; <code>templates/</code> contains manifests; <code>_helpers.tpl</code> holds named templates; <code>Chart.lock</code> captures resolved dependency versions. Chart <code>version</code> and application <code>appVersion</code> are different.</p><p>Later values files override earlier ones; explicit set values override files. <code>--set-string</code> preserves string interpretation. Lists are typically replaced, not item-merged. Do not assume an environment variable in the Helm client becomes a chart value.</p><div class="table-wrap"><table><thead><tr><th>Template keyword</th><th>Use</th></tr></thead><tbody><tr><td>.Values / .Release / .Chart</td><td>Configuration / release metadata / chart metadata.</td></tr><tr><td>include / define</td><td>Reusable named templates; include returns a string for pipelines.</td></tr><tr><td>toYaml / nindent</td><td>Serialize nested values and indent correctly.</td></tr><tr><td>default / required / quote</td><td>Fallback / required value validation / YAML string quoting.</td></tr><tr><td>if / with / range</td><td>Conditional rendering / scoped context / iteration.</td></tr><tr><td>values.schema.json</td><td>Validate values types and constraints before deploying.</td></tr></tbody></table></div>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Chart structure, values and template keywords commands">Copy</button></div><pre><code>helm show chart ./chart
+helm show values ./chart
+helm lint ./chart -f values-dev.yaml
+helm template myapp ./chart -n &lt;ns&gt; -f values-dev.yaml --debug
+helm dependency list ./chart
+# Illustrative template fragment; service.port is a number:
+# ports:
+#   - port: {{ .Values.service.port }}
+#     targetPort: http</code></pre>
+<div class="refs">Read in context: <a href="https://helm.sh/docs/chart_template_guide/values_files/" target="_blank" rel="noopener noreferrer">Values files ↗</a><a href="https://helm.sh/docs/chart_template_guide/debugging/" target="_blank" rel="noopener noreferrer">Template debugging ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why can a Helm value be set but have no effect?</summary><div class="answer">The template may not reference it, may use a different path, or a later override may replace it. Inspect rendered YAML, installed manifest and the live object, then check how the app reads that field.</div></details>
+<details><summary>What does Helm lint not prove?</summary><div class="answer">It does not prove admission success, scheduling, network reachability, a healthy runtime or correct business behavior. Local rendering is one validation layer.</div></details>
+</article>
+<article class="topic" id="helm-2"><h3>Inspect, install, upgrade and rollback</h3><p>Read release state before changing it. Compare computed values and installed manifests with the live objects; admission, manual edits and controllers can affect live state. Helm rollback does not reverse external side effects or automatically make old binaries compatible with a new database schema.</p><p>Version note: these examples use shared Helm 3/4 commands. Check local help for version-specific flags: Helm 3 commonly uses <code>--atomic</code>; Helm 4 uses <code>--rollback-on-failure</code> for corresponding failure-handling workflows. Rendering/get-values output can contain sensitive configuration; redact before sharing.</p>
+<div class="cmd-head"><span>Inspect + labelled changes</span><button class="copy" aria-label="Copy Inspect, install, upgrade and rollback commands">Copy</button></div><pre><code># Inspect
+helm list -n &lt;ns&gt;
+helm status myapp -n &lt;ns&gt;
+helm get values myapp -n &lt;ns&gt; --all
+helm get manifest myapp -n &lt;ns&gt;
+helm history myapp -n &lt;ns&gt;
+helm get hooks myapp -n &lt;ns&gt;
+# Changes
+helm upgrade --install myapp ./chart -n &lt;ns&gt; -f values-prod.yaml --wait --timeout 5m
+helm rollback myapp &lt;revision&gt; -n &lt;ns&gt; --wait --timeout 5m
+# Test hooks execute workloads, so review them first
+helm test myapp -n &lt;ns&gt;</code></pre>
+<div class="refs">Read in context: <a href="https://helm.sh/docs/helm_upgrade/" target="_blank" rel="noopener noreferrer">Upgrade reference ↗</a><a href="https://helm.sh/docs/helm_rollback/" target="_blank" rel="noopener noreferrer">Rollback reference ↗</a><a href="https://helm.sh/docs/topics/charts_hooks/" target="_blank" rel="noopener noreferrer">Hook lifecycle ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Upgrade times out: what do you check first?</summary><div class="answer">Inspect release status, Pods/events, readiness, scheduling, image pulls, PVCs and hooks. A Helm timeout is a symptom; determine which Kubernetes resource failed to become ready.</div></details>
+<details><summary>Why might a ConfigMap update not change app behavior?</summary><div class="answer">Environment values are captured when containers start. Mounted file updates have propagation and subPath caveats, and the application must reload them. A Deployment checksum annotation can intentionally trigger replacement when chart-managed config changes.</div></details>
+<details><summary>Do Helm hooks behave exactly like normal release resources?</summary><div class="answer">No. Hooks have their own lifecycle/ordering and deletion policies. Failed or leftover hook Jobs can complicate upgrades. Inspect hook annotations, logs and cleanup behavior.</div></details>
+</article>
+<article class="topic" id="helm-3"><h3>A small values-to-template example</h3><p>A values file is input; only template references turn it into Kubernetes fields. Keep numeric ports numeric, quote strings where appropriate and use nindent for nested YAML. Keep selectors stable across chart upgrades.</p>
+<div class="cmd-head"><span>Template illustration + labelled change</span><button class="copy" aria-label="Copy A small values-to-template example commands">Copy</button></div><pre><code># values.yaml
+image:
+  repository: example/backend
+  tag: interview
+replicaCount: 2
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# templates/deployment.yaml fragments
+# spec:
+#   replicas: {{ .Values.replicaCount }}
+#   template:
+#     spec:
+#       containers:
+#         - name: backend
+#           image: {{ printf &quot;%s:%s&quot; .Values.image.repository .Values.image.tag | quote }}
+#           resources:
+#             {{- toYaml .Values.resources | nindent 12 }}
+
+helm template myapp ./chart -f values.yaml --set replicaCount=3
+# Change to a release, not just rendering:
+helm upgrade --install myapp ./chart -n &lt;ns&gt; -f values.yaml --set replicaCount=3 --wait</code></pre>
+<div class="refs">Read in context: <a href="https://helm.sh/docs/chart_template_guide/functions_and_pipelines/" target="_blank" rel="noopener noreferrer">Functions and pipelines ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>What should the rendered replica count be here?</summary><div class="answer">Three, because the explicit --set override takes precedence over the file. Inspect rendered spec.replicas rather than assuming the flag affected the intended template.</div></details>
+<details><summary>Why is indentation a Helm debugging topic?</summary><div class="answer">Go template evaluation produces text; YAML structure depends on whitespace. Valid template syntax can render invalid YAML or fields in the wrong location. Render and inspect the resulting object.</div></details>
+</article>
+</section>
+<section id="storage"><div class="section-head"><span class="badge">10 / Core + depth</span><h2>Storage: PV, PVC, CSI and Ceph</h2><p class="intro">Start with the Kubernetes storage contract, then map it to Ceph components. Ceph knowledge here is study material, not a claim that you administered it.</p></div>
+<article class="topic" id="storage-1"><h3>PersistentVolume, claim, class and access mode</h3><p>A PVC requests storage; a PV represents provisioned storage; a StorageClass selects provisioning policy/driver. CSI connects Kubernetes volume operations to a storage backend. A bound PVC proves binding, not successful attachment, mounting, permissions or low-latency I/O.</p><p><code>ReadWriteOnce</code> generally allows read-write mounting on one node and can still involve multiple Pods there. <code>ReadWriteOncePod</code> is single-Pod access for supported CSI configurations. <code>ReadWriteMany</code> supports multi-node writers when the backend does. Reclaim policy, topology, binding mode and expansion support matter.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy PersistentVolume, claim, class and access mode commands">Copy</button></div><pre><code>kubectl get pvc -n &lt;ns&gt;
+kubectl describe pvc &lt;claim&gt; -n &lt;ns&gt;
+kubectl get pv
+kubectl get storageclass
+kubectl get volumeattachments
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
+# Inside an existing container with tools:
+df -h
+df -i
+mount</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener noreferrer">PV/PVC semantics ↗</a><a href="https://kubernetes.io/docs/concepts/storage/storage-classes/" target="_blank" rel="noopener noreferrer">StorageClass options ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why can a PVC stay Pending?</summary><div class="answer">Check claim/class matching, provisioner/CSI health, capacity, topology and events. WaitForFirstConsumer may intentionally defer binding until workload placement is determined.</div></details>
+<details><summary>A Pod is stuck in ContainerCreating with a bound PVC. Why?</summary><div class="answer">Inspect attach/mount events, node connectivity, CSI node plugin, volume permissions and stale attachment. Do not conclude provisioning succeeded end-to-end just because binding succeeded.</div></details>
+<details><summary>Does a PV guarantee a backup?</summary><div class="answer">No. Persistence across Pod replacement is not backup or disaster recovery. Replication also does not protect against every deletion, corruption or operator mistake.</div></details>
+</article>
+<article class="topic" id="storage-2"><h3>Ceph architecture: RADOS, OSD, MON, MGR and CRUSH</h3><p>Ceph distributes data through <a href="https://docs.ceph.com/en/latest/architecture/" target="_blank" rel="noopener noreferrer"><strong>RADOS</strong></a>. OSDs store objects and participate in replication/recovery. MONs maintain authoritative cluster maps using quorum. MGR supplies management/telemetry services. CRUSH maps data placement across configured failure domains; placement groups organise object placement and recovery.</p><p>Pools can use replication or erasure coding. Replication is simple but uses more raw capacity; erasure coding can save space with computation and workload constraints. Recovery/rebalancing consumes disk and network bandwidth and can increase client latency. A nominally replicated pool is only as resilient as its actual failure-domain placement.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Ceph architecture: RADOS, OSD, MON, MGR and CRUSH commands">Copy</button></div><pre><code># Run in an authorised Ceph client/toolbox with config and keyring
+ceph -s
+ceph health detail
+ceph osd tree
+ceph osd df
+ceph df
+ceph pg stat
+ceph osd perf</code></pre>
+<div class="refs">Read in context: <a href="https://docs.ceph.com/en/latest/architecture/" target="_blank" rel="noopener noreferrer">Ceph architecture ↗</a><a href="https://docs.ceph.com/en/latest/rados/operations/monitoring/" target="_blank" rel="noopener noreferrer">Ceph monitoring ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Is MON the gateway for every client data read/write?</summary><div class="answer">No. It provides cluster map/quorum services. Clients use placement information to communicate with the relevant OSDs; do not model all data I/O as flowing through MON.</div></details>
+<details><summary>Why can performance degrade after an OSD failure?</summary><div class="answer">Client work now competes with recovery/backfill, redundancy is reduced and placement changes. Correlate health/PG state, OSD latency and network/disk saturation before changing recovery settings.</div></details>
+<details><summary>What does HEALTH_WARN mean?</summary><div class="answer">It is a summary, not a root cause. Read health detail for the specific condition and assess impact. A warning can range from redundancy problems to operational advisories.</div></details>
+</article>
+<article class="topic" id="storage-3"><h3>RBD, CephFS, RGW and Kubernetes integration</h3><div class="table-wrap"><table><thead><tr><th>Interface</th><th>What it exposes / when to discuss</th></tr></thead><tbody><tr><td>RBD</td><td>Block images; common backend for filesystem-on-block application volumes. Multi-writer correctness requires appropriate supported configuration.</td></tr><tr><td>CephFS</td><td>Shared POSIX filesystem, commonly used for RWX; MDS handles metadata coordination.</td></tr><tr><td>RGW</td><td>Object API gateway, such as S3-compatible access; not an ordinary POSIX mount.</td></tr><tr><td>Rook / Ceph CSI</td><td>Rook orchestrates Ceph lifecycle in Kubernetes; CSI provisions and mounts volumes. They have different responsibilities.</td></tr></tbody></table></div><p>For slow Kafka I/O on Ceph-backed storage, trace broker request latency → filesystem/block activity → CSI/node path → network → OSD latency and recovery. Kafka’s replication plus storage replication can amplify resource cost. Measure actual durability, latency and failure behavior before choosing a backend.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy RBD, CephFS, RGW and Kubernetes integration commands">Copy</button></div><pre><code># Discover components: labels/names vary by installation
+kubectl get pods -n rook-ceph -o wide
+kubectl get csidrivers
+kubectl get storageclass -o yaml
+kubectl logs &lt;csi-pod&gt; -n rook-ceph -c &lt;container&gt; --tail=100
+# CephFS diagnostics in toolbox, where configured
+ceph fs status
+# Node tools, if available and authorised
+iostat -xz 1 5
+vmstat 1 5</code></pre>
+<div class="refs">Read in context: <a href="https://docs.ceph.com/en/latest/cephfs/" target="_blank" rel="noopener noreferrer">CephFS design ↗</a><a href="https://rook.io/docs/rook/latest/Storage-Configuration/Block-Storage-RBD/block-storage/" target="_blank" rel="noopener noreferrer">Rook RBD integration ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>RBD or CephFS for a shared upload directory?</summary><div class="answer">CephFS is the natural shared-filesystem candidate. RBD is a block interface; ordinary filesystems on shared block devices are not automatically safe for concurrent multi-node mounting.</div></details>
+<details><summary>Why can CephFS operations be slow even when data disks look fine?</summary><div class="answer">Metadata-heavy workloads can pressure MDS or metadata pools. Check MDS status/latency, client behavior, network and pool health; separate metadata operations from bulk data throughput.</div></details>
+<details><summary>Should I restart CSI immediately after a mount error?</summary><div class="answer">First inspect events and controller/node-plugin logs. The root problem may be connectivity, authentication, topology or backend health. A restart can erase useful evidence or add disruption.</div></details>
+</article>
+</section>
+<section id="buffers"><div class="section-head"><span class="badge">11 / Depth</span><h2>Ring buffers, congestion and backpressure</h2><p class="intro">These connect directly to high-throughput messaging. Application queues, TCP buffers and NIC descriptor rings are different layers.</p></div>
+<article class="topic" id="buffers-1"><h3>Ring buffers: bounded storage and concurrency</h3><p>A ring buffer reuses a fixed array with positions that wrap around. It can avoid per-entry node allocation and improve locality. A generic array-backed ring is not automatically thread-safe or lock-free: producer/consumer coordination, publication visibility and overflow behavior must be designed.</p><p>When full, choose an explicit policy: block, reject, drop according to a stated contract, or spill durably. Overwriting unread data is not acceptable for reliable event processing. LMAX Disruptor adds sequencing and consumer dependency coordination; a slow consumer can constrain safe producer progress. Busy-spin wait strategies can consume a core and interact badly with container CPU quotas.</p>
+<div class="refs">Read in context: <a href="https://lmax-exchange.github.io/disruptor/user-guide/index.html" target="_blank" rel="noopener noreferrer">Disruptor guide ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Is a ring buffer always faster than BlockingQueue?</summary><div class="answer">No. Results depend on contention, wait strategy, batching, allocation, payload ownership and CPU availability. Benchmark the actual producer/consumer topology, including p99 latency and overload.</div></details>
+<details><summary>How can object reuse introduce a bug?</summary><div class="answer">A consumer may keep a reference after its slot is reused, then observe mutated data. Define ownership/lifetime and copy or complete processing before reuse.</div></details>
+<details><summary>What is the LLD connection?</summary><div class="answer">A bounded queue needs a capacity, producer/consumer contract, ordering requirements, full policy, shutdown semantics and tests for wraparound and races. Choosing an array is only one design decision.</div></details>
+</article>
+<article class="topic" id="buffers-2"><h3>NIC rings, socket buffers and network congestion</h3><p>A NIC RX/TX ring contains descriptors for packet processing, not application events. RX exhaustion can drop packets if the host does not drain fast enough. RSS spreads flows among hardware queues; RPS/RFS/XPS are related software steering mechanisms. More queue capacity may absorb bursts but can also increase waiting time; it does not create processing capacity.</p><p>TCP receiver flow control protects the receiver via its advertised window. Congestion control adapts sending to the network path. Socket buffers hold data at endpoints. A larger socket buffer does not repair packet loss, a slow application or an overloaded link. Bufferbloat means excessive queueing that inflates latency.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy NIC rings, socket buffers and network congestion commands">Copy</button></div><pre><code># Inspect on the relevant Linux node/interface
+ethtool -g &lt;iface&gt;
+ethtool -l &lt;iface&gt;
+ethtool -S &lt;iface&gt;
+cat /proc/net/softnet_stat
+ss -tin
+nstat -az
+sysctl net.ipv4.tcp_congestion_control
+sysctl net.core.rmem_max net.core.wmem_max</code></pre>
+<div class="refs">Read in context: <a href="https://www.kernel.org/doc/html/latest/networking/scaling.html" target="_blank" rel="noopener noreferrer">RX/TX queue scaling ↗</a><a href="https://docs.kernel.org/networking/ip-sysctl.html" target="_blank" rel="noopener noreferrer">TCP controls ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Would you increase RX ring size to fix packet drops?</summary><div class="answer">Only after confirming the drop location/counters and host processing bottleneck. Compare bursts, softirq/CPU distribution, queue balance and application throughput. Test a bounded change with latency and drop measurements.</div></details>
+<details><summary>Can ring buffers solve sustained overload?</summary><div class="answer">No. If arrival rate stays above service rate, any finite buffer eventually fills. Buffers absorb bursts; capacity increases, admission control or upstream rate reduction address persistent overload.</div></details>
+</article>
+<article class="topic" id="buffers-3"><h3>Backpressure: keep a fast producer from overwhelming a slow consumer</h3><p>Backpressure communicates or enforces downstream capacity. Examples include bounded queues that block/reject, demand signalling, consumer pause/resume and admission limits. Rate limiting caps admission according to a policy; load shedding rejects excess work. They can complement backpressure but are not interchangeable.</p><p>Example: arrival rate 12K/s, service rate 10K/s. Backlog grows by 2K/s. A queue of 20K items buys roughly 10 seconds from empty under those constant rates. A bigger queue delays failure and adds memory/latency; it does not fix the imbalance. In a stable system, Little’s Law relates average in-flight work L = throughput λ × average time W; use consistent units and scope.</p>
+<div class="refs">Read in context: <a href="https://www.reactive-streams.org/" target="_blank" rel="noopener noreferrer">Reactive Streams and demand ↗</a><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html" target="_blank" rel="noopener noreferrer">Executor queue/rejection behavior ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How do you apply this to a Java executor?</summary><div class="answer">Use a bounded work queue, a deliberate rejection policy and observable queue delay/depth. CallerRunsPolicy can slow callers but may block a request/event-loop thread, so choose it with the threading model in mind.</div></details>
+<details><summary>What are the signals of overload?</summary><div class="answer">Rising queue age/depth or consumer lag, increased tail latency, timeouts and rejection rates. CPU may be low if work is blocked on I/O. Find the stage that cannot sustain arrival rate.</div></details>
+<details><summary>What does Reactive Streams request(n) mean?</summary><div class="answer">The subscriber signals demand for up to n additional elements. That coordinates flow within the participating chain; it does not magically make a database or arbitrary external producer backpressure-aware.</div></details>
+</article>
+</section>
+<section id="kafka"><div class="section-head"><span class="badge">12 / Core for your résumé</span><h2>Kafka performance, reliability and overload</h2><p class="intro">Connect application, broker, disk and network evidence. Healthy Pods do not prove a healthy Kafka cluster, or the reverse.</p></div>
+<article class="topic" id="kafka-1"><h3>Partitions, consumer lag, ISR and producer limits</h3><p>A partition is an ordering/parallelism unit. Lag is the distance between a consumer position/committed offset metric and the log end according to the tool: specify the definition. Growing lag can reflect slow processing, skew, rebalance, downstream delay or broker trouble. ISR describes replicas sufficiently caught up under broker rules; it is not a consumer health metric.</p><p>For producers, <code>batch.size</code>, <code>linger.ms</code> and compression trade batching efficiency against delay/CPU. <code>buffer.memory</code> and <code>max.block.ms</code> bound buffering/waiting behavior; they do not turn sustained overload into capacity. Acknowledgement, idempotence and broker in-sync requirements affect durability; check version-specific interactions rather than memorising defaults.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Partitions, consumer lag, ISR and producer limits commands">Copy</button></div><pre><code># Kafka distribution scripts; supply approved auth config as needed
+kafka-topics.sh --bootstrap-server &lt;broker:9092&gt; --describe --topic &lt;topic&gt;
+kafka-consumer-groups.sh --bootstrap-server &lt;broker:9092&gt; --describe --group &lt;group&gt;
+kafka-broker-api-versions.sh --bootstrap-server &lt;broker:9092&gt;
+# Kubernetes side
+kubectl top pods -n &lt;ns&gt; --containers
+kubectl describe pod &lt;broker-pod&gt; -n &lt;ns&gt;</code></pre>
+<div class="refs">Read in context: <a href="https://kafka.apache.org/41/configuration/producer-configs/" target="_blank" rel="noopener noreferrer">Producer configuration ↗</a><a href="https://kafka.apache.org/41/operations/monitoring/" target="_blank" rel="noopener noreferrer">Kafka monitoring ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How would you investigate uneven consumer lag?</summary><div class="answer">Compare lag and processing rate per partition, assignments, key skew and downstream work. A hot partition cannot be fixed merely by adding idle consumers; changing partition/key design also affects ordering.</div></details>
+<details><summary>Does acks=all guarantee zero message loss in every failure?</summary><div class="answer">No. It depends on ISR/minimum in-sync settings, failure patterns and producer behavior, among other configuration. Explain the exact durability contract instead of using an absolute claim.</div></details>
+<details><summary>How do you pause processing without breaking consumer ownership?</summary><div class="answer">Follow the consumer/client threading contract, continue required polling/coordination, bound outstanding work and commit only according to successful processing semantics. Pause/resume alone does not make offset handling correct.</div></details>
+</article>
+</section>
+<section id="observability"><div class="section-head"><span class="badge">13 / Core</span><h2>Observability, Linux and incident method</h2><p class="intro">Your diagnostic suite should produce a useful evidence bundle, not just a large log dump.</p></div>
+<article class="topic" id="observability-1"><h3>Metrics, logs, traces and operating-system signals</h3><p>Metrics reveal rates, saturation and trends; logs capture discrete events; traces connect timing across calls. Use request/error/duration signals for services and utilisation/saturation/errors for resources. Compare p50/p95/p99 with sample volume; a mean hides tails. Prometheus label cardinality grows with combinations—do not use unbounded request IDs as metric labels.</p><p>Useful Linux distinctions: load average is not CPU utilisation; iowait is not a direct disk latency measurement; free memory is not the same as reclaimable cache. Correlate application timing with node CPU, run queue, disk latency and network deltas. Tool availability and permissions vary.</p>
+<div class="cmd-head"><span>Inspect</span><button class="copy" aria-label="Copy Metrics, logs, traces and operating-system signals commands">Copy</button></div><pre><code>uptime
+free -m
+vmstat 1 5
+iostat -xz 1 5
+pidstat -p &lt;pid&gt; 1 5
+ps -L -p &lt;pid&gt;
+# Targeted Pod evidence
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; -c &lt;container&gt; --since=10m --timestamps
+kubectl get events -n &lt;ns&gt; --sort-by=.metadata.creationTimestamp</code></pre>
+<div class="refs">Read in context: <a href="https://prometheus.io/docs/practices/instrumentation/" target="_blank" rel="noopener noreferrer">Instrumentation guidance ↗</a><a href="https://www.kernel.org/doc/html/latest/admin-guide/sysctl/vm.html" target="_blank" rel="noopener noreferrer">Linux VM concepts ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>What should a 15-second diagnostic bundle contain?</summary><div class="answer">Time window/context; selected Pod status/restarts/events; Kafka lag/ISR/partition signals; node CPU/memory/network/storage snapshots; command errors; a concise summary with links to raw evidence. State sampling limits.</div></details>
+<details><summary>Why can a diagnostic bundle miss the cause?</summary><div class="answer">It may sample after a transient event, omit the relevant node/namespace, use cumulative counters without deltas or fail silently. Preserve timestamps and report uncertainty.</div></details>
+<details><summary>How do you prevent the tooling from worsening an incident?</summary><div class="answer">Limit parallelism, timeouts, output volume and expensive API queries; avoid polling loops with no backoff. Keep mutation separate from collection and redact sensitive data.</div></details>
+</article>
+<article class="topic" id="observability-2"><h3>Six incident drills: say the next check before opening</h3><p>For each scenario, explain a hypothesis, the evidence you need and the verification after a proposed fix. A restart is a possible mitigation, not proof of the root cause.</p>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>CrashLoopBackOff after a release: what is your path?</summary><div class="answer">Read container lastState/termination reason and events, then previous logs. Separate application startup failure, bad config, permissions, OOM and liveness kills. Compare deployed image/config to the previous release; verify a targeted fix with a controlled rollout.</div></details>
+<details><summary>Pods are healthy, API is slow and CPU is low. Next?</summary><div class="answer">Look at request traces, connection pool wait, blocked threads, downstream latency, disk/network and CPU throttling. Low average CPU does not establish spare capacity or eliminate contention.</div></details>
+<details><summary>Service times out but Pod-local curl works. Next?</summary><div class="answer">Check listener bind address, Service targetPort, selectors and EndpointSlice readiness, then source egress/destination ingress policy and actual network path. Test from the failing client namespace.</div></details>
+<details><summary>Ceph-backed Kafka throughput drops during recovery. Next?</summary><div class="answer">Correlate recovery timing with OSD latency, PG state, disk/network pressure, broker request latency and replication lag. Consider safe load reduction/capacity decisions with the storage owner; verify steady-state and recovery behavior.</div></details>
+<details><summary>Only the new Helm release fails. Next?</summary><div class="answer">Compare computed values, rendered/installed manifests, live resources and application config. Inspect hooks, image digest, resources, probes, security context and volume references.</div></details>
+<details><summary>Memory increases with traffic until OOM. Next?</summary><div class="answer">Distinguish increasing retained heap from allocation bursts, bounded/unbounded queues, thread/direct memory and cache growth. Use container history plus JVM evidence, then test memory behavior under sustained load and overload.</div></details>
+</article>
+</section>
+<section id="examples"><div class="section-head"><span class="badge">14 / Practice</span><h2>Annotated manifest: connect the pieces</h2><p class="intro">A teaching example, not an environment-specific production deployment. Image, endpoints, timing and resource values need adaptation.</p></div>
+<article class="topic" id="examples-1"><h3>Deployment + Service: security, resources, probes and shutdown</h3><p>This example assumes a Spring Boot application with readiness/liveness Actuator health groups enabled on port 8080. The resource values are illustrative, not recommendations. The runtime image must support UID 10001 and writable /tmp. Add workload-specific configuration, secrets, network policy and storage as required.</p>
+<div class="cmd-head"><span>Configuration example</span><button class="copy" aria-label="Copy Deployment + Service: security, resources, probes and shutdown commands">Copy</button></div><pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      terminationGracePeriodSeconds: 40
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backend
+          image: myapp:interview
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: &quot;1&quot;
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [&quot;ALL&quot;]
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener noreferrer">Deployment behavior ↗</a><a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/" target="_blank" rel="noopener noreferrer">Security settings ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>What is missing for a complete graceful shutdown setup?</summary><div class="answer">Application shutdown configuration, realistic processing/drain budgets and validation of ingress/load-balancer behavior. terminationGracePeriodSeconds only supplies a deadline.</div></details>
+<details><summary>Why might maxUnavailable=0 stall a rollout?</summary><div class="answer">The extra replica may not schedule due to capacity/placement/storage, or it may never become ready. Inspect events and readiness instead of assuming the rollout controller is broken.</div></details>
+<details><summary>How would you convert this to a Helm chart?</summary><div class="answer">Parameterise the image, replicas, resources, ports, probe settings and optional volume/security values only where needed. Keep selector labels stable; render and review YAML before deployment.</div></details>
+</article>
+</section>
+<section id="cheatsheet"><div class="section-head"><span class="badge">15 / Revision</span><h2>Command index and final interview checklist</h2><p class="intro">Search “Inspect”, a resource name, or an error to find the surrounding explanation. Changes below are explicitly labelled.</p></div>
+<article class="topic" id="cheatsheet-1"><h3>Additional everyday commands</h3><p>Use explicit context/namespace when operating across environments. Diff and dry-run are useful checks but do not establish runtime correctness. Inspect configuration output for secrets before sharing. <code>kubectl top</code> needs a working metrics pipeline; <code>debug</code> creates diagnostic resources and may require extra permissions.</p>
+<div class="cmd-head"><span>Inspect + labelled changes</span><button class="copy" aria-label="Copy Additional everyday commands commands">Copy</button></div><pre><code># Inspect / local validation
+kubectl get all -n &lt;ns&gt;
+# get all does NOT include every resource type
+kubectl api-resources
+kubectl explain deployment.spec.strategy
+kubectl get configmap &lt;name&gt; -n &lt;ns&gt; -o yaml
+kubectl get pod &lt;pod&gt; -n &lt;ns&gt; -o wide
+kubectl diff -n &lt;ns&gt; -f manifest.yaml
+kubectl apply --dry-run=server -n &lt;ns&gt; -f manifest.yaml
+helm show readme ./chart
+helm dependency build ./chart
+# Interactive diagnostics; may execute processes or create a debug container
+kubectl exec -it &lt;pod&gt; -n &lt;ns&gt; -c &lt;container&gt; -- sh
+kubectl debug -it &lt;pod&gt; -n &lt;ns&gt; --image=&lt;approved-debug-image&gt; --target=&lt;container&gt;
+# Changes: review impact first
+kubectl apply -n &lt;ns&gt; -f manifest.yaml
+kubectl rollout restart deployment/&lt;app&gt; -n &lt;ns&gt;
+kubectl cordon &lt;node&gt;
+kubectl drain &lt;node&gt; --ignore-daemonsets
+kubectl uncordon &lt;node&gt;
+# Local Docker lifecycle / distribution changes
+docker pull &lt;image:tag&gt;
+docker tag myapp:interview &lt;registry&gt;/myapp:interview
+docker push &lt;registry&gt;/myapp:interview
+# Inspect Compose configuration / local multi-container startup
+docker compose config
+docker compose up -d
+docker compose logs --tail=100</code></pre>
+<div class="refs">Read in context: <a href="https://kubernetes.io/docs/reference/kubectl/" target="_blank" rel="noopener noreferrer">kubectl reference ↗</a><a href="https://docs.docker.com/reference/cli/docker/" target="_blank" rel="noopener noreferrer">Docker CLI ↗</a><a href="https://helm.sh/docs/helm/" target="_blank" rel="noopener noreferrer">Helm CLI ↗</a></div>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>Why avoid kubectl delete pod as the first diagnostic step?</summary><div class="answer">It can remove local evidence and temporarily hide symptoms without fixing the mechanism. Collect status, previous logs and relevant timing first, unless immediate mitigation needs take precedence.</div></details>
+<details><summary>What is the difference between cordon and drain?</summary><div class="answer">Cordon marks a node unschedulable for ordinary new scheduling. Drain also attempts eviction of eligible workloads and can be blocked by disruption budgets or unmanaged Pods; DaemonSets and local storage require deliberate handling.</div></details>
+<details><summary>Does kubectl get all really show all resources?</summary><div class="answer">No. It is a convenience category and omits important resources. Query ConfigMaps, Secrets metadata, PVCs, policies and other types explicitly when relevant.</div></details>
+</article>
+<article class="topic" id="cheatsheet-2"><h3>Final self-check and a 90-minute mock</h3><ul><li>Explain a request path and diagnose a Service with no ready backends.</li><li>Explain requests/limits, OOMKilled, native memory and throttling.</li><li>Write a non-root security context and explain every field.</li><li>Explain values → manifest → live object → runtime configuration.</li><li>Differentiate RBD, CephFS, RGW; explain PVC binding versus mounting.</li><li>Differentiate ring buffers, congestion control, receiver flow control and application backpressure.</li><li>Defend throughput measurements and the scope of your 15-second diagnostic claim.</li></ul><p><strong>Mock:</strong> 10 min résumé deep dive → 25 min Java LLD plus concurrency → 20 min Kubernetes incident → 15 min Docker/Helm/security → 15 min storage/overload follow-ups → 5 min your questions.</p>
+<div class="qa-title">Interview questions · try answering first</div>
+<details><summary>How should I handle an unfamiliar command or version?</summary><div class="answer">Explain the object/state you need to inspect, then use the installed tool help or official versioned documentation. Accurate reasoning is more valuable than inventing a flag.</div></details>
+<details><summary>What should I ask the interviewer?</summary><div class="answer">Ask about service ownership, production incident responsibilities, deployment/rollback practices, performance validation and how application and platform teams collaborate.</div></details>
+</article>
+</section>
+<footer class="foot">Prepared 26 October 2026. Personal experience claims are taken from your provided résumé and notes. Other examples are illustrative. Official documentation links are placed alongside the relevant explanations; “latest” documentation can differ from an installed version. This file uses no external scripts, fonts, analytics or network requests until you open a reference.</footer></main>
+<script>
+const search=document.getElementById('search');
+const sections=[...document.querySelectorAll('main section')];
+const topics=[...document.querySelectorAll('.topic')];
+const status=document.getElementById('results');
+function filter(){const terms=search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);let count=0;sections.forEach(s=>{let shown=0;const heading=s.querySelector('.section-head').textContent.toLowerCase();s.querySelectorAll('.topic').forEach(t=>{const text=(heading+' '+t.textContent).toLowerCase();const match=terms.every(term=>text.includes(term));t.hidden=!match;if(match){shown++;count++;}});s.hidden=!shown;const link=document.querySelector('nav a[href="#'+s.id+'"]');if(link)link.hidden=!shown;});status.textContent=count+' of '+topics.length+' topics'+(terms.length?' match your search':' · answers start collapsed');document.getElementById('empty').style.display=count?'none':'block';}
+search.addEventListener('input',filter);filter();
+document.getElementById('expand').addEventListener('click',()=>topics.filter(t=>!t.hidden).forEach(t=>t.querySelectorAll('details').forEach(d=>d.open=true)));
+document.getElementById('collapse').addEventListener('click',()=>document.querySelectorAll('details').forEach(d=>d.open=false));
+let printState=[];window.addEventListener('beforeprint',()=>{printState=[...document.querySelectorAll('details')].map(d=>[d,d.open]);printState.forEach(([d])=>d.open=true);});window.addEventListener('afterprint',()=>printState.forEach(([d,open])=>d.open=open));document.getElementById('print').addEventListener('click',()=>window.print());
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{const text=b.parentElement.nextElementSibling.textContent;try{await navigator.clipboard.writeText(text);b.textContent='Copied';}catch{const range=document.createRange();range.selectNodeContents(b.parentElement.nextElementSibling);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);b.textContent='Selected: copy manually';}setTimeout(()=>b.textContent='Copy',2000);}));
+const mobile=document.getElementById('mobile-nav');mobile.addEventListener('click',()=>{const open=document.querySelector('aside').classList.toggle('open');mobile.setAttribute('aria-expanded',String(open));});document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>{document.querySelector('aside').classList.remove('open');mobile.setAttribute('aria-expanded','false');}));
+if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id));}}),{rootMargin:'-10% 0px -75% 0px'});sections.forEach(s=>observer.observe(s));}
+</script></body></html>
